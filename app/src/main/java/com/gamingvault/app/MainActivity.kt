@@ -87,7 +87,7 @@ class MainActivity : ComponentActivity() {
                         Frame(Modifier.weight(.95f).fillMaxHeight()) {
                             Row(verticalAlignment=Alignment.CenterVertically) {
                                 Text("♧  Meine Spiele",color=Color.White,fontSize=18.sp,fontWeight=FontWeight.Bold,modifier=Modifier.weight(1f))
-                                GoldButton("+ Spiel") { newGameDialog=true }
+                                GoldButton("+ Spiel", onClick = { newGameDialog=true })
                             }
                             OutlinedTextField(search,{search=it},placeholder={Text("Spiel suchen ...",fontSize=12.sp)},singleLine=true,modifier=Modifier.fillMaxWidth().padding(vertical=6.dp),textStyle= androidx.compose.ui.text.TextStyle(fontSize=12.sp,color=Color.White))
                             LazyColumn(verticalArrangement=Arrangement.spacedBy(8.dp)) {
@@ -159,7 +159,7 @@ class MainActivity : ComponentActivity() {
             if(message.isNotBlank()) { LaunchedEffect(message) { kotlinx.coroutines.delay(2000);message="" }; Text(message,color=Gold,modifier=Modifier.align(Alignment.BottomCenter).background(Ink).padding(8.dp)) }
         }
         if(editing!=null) { AccountEditor(editing!!,onDismiss={editing=null},onSave={ account -> persist(if(adding) accounts+account else accounts.map { if(it.id==account.id) account else it });selectedId=account.id;selectedGame=account.game;editing=null }) }
-        if(newGameDialog) { var name by remember { mutableStateOf("") }; AlertDialog(onDismissRequest={newGameDialog=false},title={Text("Spiel hinzufügen")},text={ OutlinedTextField(name,{name=it},label={Text("Spielname")}) },confirmButton={GoldButton("Hinzufügen") { if(name.isNotBlank()) {customGames.add(name.trim());selectedGame=name.trim()};newGameDialog=false }},dismissButton={TextButton(onClick={newGameDialog=false}){Text("Abbrechen")}}) }
+        if(newGameDialog) { var name by remember { mutableStateOf("") }; AlertDialog(onDismissRequest={newGameDialog=false},title={Text("Spiel hinzufügen")},text={ OutlinedTextField(name,{name=it},label={Text("Spielname")}) },confirmButton={GoldButton("Hinzufügen", onClick = { if(name.isNotBlank()) {customGames.add(name.trim());selectedGame=name.trim()};newGameDialog=false })},dismissButton={TextButton(onClick={newGameDialog=false}){Text("Abbrechen")}}) }
     }
 }
 @Composable private fun Stat(icon:String,number:Int,label:String,modifier:Modifier=Modifier) { Frame(modifier.height(72.dp)) { Row(verticalAlignment=Alignment.CenterVertically) { Text(icon,color=Gold,fontSize=26.sp); Spacer(Modifier.width(10.dp)); Column { Text("$number",color=Gold,fontSize=25.sp,fontWeight=FontWeight.Bold); Text(label,color=Color.White,fontSize=11.sp) } } } }
@@ -172,7 +172,7 @@ class MainActivity : ComponentActivity() {
         Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
             EditField("Account-Bezeichnung",label){label=it}; EditField("Anmeldename",username){username=it}; EditField("Passwort",password,true){password=it}; EditField("E-Mail-Adresse",email){email=it}; EditField("E-Mail-Passwort",emailPassword,true){emailPassword=it}; EditField("Gamigo Benutzername (optional)",gamigoUsername){gamigoUsername=it}; EditField("Gamigo Passwort (optional)",gamigoPassword,true){gamigoPassword=it}; EditField("Notizen",notes){notes=it}
         }
-        Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.End) { TextButton(onClick=onDismiss){Text("Abbrechen")}; GoldButton("Speichern") { onSave(initial.copy(label=label,username=username,password=password,email=email,emailPassword=emailPassword,gamigoUsername=gamigoUsername,gamigoPassword=gamigoPassword,notes=notes)) } }
+        Row(Modifier.fillMaxWidth(),horizontalArrangement=Arrangement.End) { TextButton(onClick=onDismiss){Text("Abbrechen")}; GoldButton("Speichern", onClick = { onSave(initial.copy(label=label,username=username,password=password,email=email,emailPassword=emailPassword,gamigoUsername=gamigoUsername,gamigoPassword=gamigoPassword,notes=notes)) }) }
     } }
 }
 @Composable private fun EditField(label:String,value:String,secret:Boolean=false,onChange:(String)->Unit) { var visible by remember { mutableStateOf(false) }; OutlinedTextField(value,onChange,label={Text(label,fontSize=12.sp)},singleLine=label!="Notizen",visualTransformation=if(secret&&!visible)PasswordVisualTransformation() else VisualTransformation.None,trailingIcon=if(secret) { { IconButton(onClick={visible=!visible}) { Icon(if(visible) Icons.Outlined.VisibilityOff else Icons.Outlined.Visibility,"Sichtbarkeit",tint=Gold) } } } else null,modifier=Modifier.fillMaxWidth().padding(vertical=3.dp),textStyle=androidx.compose.ui.text.TextStyle(fontSize=13.sp,color=Color.White)) }
